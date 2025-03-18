@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Knowledge Extraction</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --accent-color: #e74c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo span {
+            color: var(--secondary-color);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        main {
+            padding-top: 80px;
+        }
+        
+        .hero {
+            background: url('/api/placeholder/1200/600') center/cover;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        
+        .hero-content {
+            position: relative;
+            color: white;
+            max-width: 600px;
+            padding: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .features {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            color: #7f8c8d;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-box {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .demo {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 5rem 0;
+        }
+        
+        .demo-content {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+        
+        .demo-text {
+            flex: 1;
+        }
+        
+        .demo-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .demo-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .how-it-works {
+            padding: 5rem 0;
+        }
+        
+        .steps {
+            margin-top: 3rem;
+        }
+        
+        .step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            align-items: center;
+        }
+        
+        .step-number {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tools {
+            padding: 5rem 0;
+            background-color: #f9f9f9;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .tool-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .tool-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-card:hover .tool-image img {
+            transform: scale(1.1);
+        }
+        
+        .tool-content {
+            padding: 1.5rem;
+        }
+        
+        .tool-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-description {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .contact {
+            padding: 5rem 0;
+        }
+        
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-logo span {
+            color: var(--secondary-color);
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bdc3c7;
+        }
+        
+        /* Interactive Demo Section */
+        .interactive-demo {
+            padding: 5rem 0;
+            background-color: #f9f9f9;
+        }
+        
+        .extraction-demo {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .demo-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .url-input {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .extraction-results {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .result-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1.5rem;
+        }
+        
+        .result-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .result-tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .result-content {
+            display: none;
+        }
+        
+        .result-content.active {
+            display: block;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .demo-content {
+                flex-direction: column;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--dark-color);
+                flex-direction: column;
+                padding: 1rem 0;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+            
+            nav ul.show {
+                display: flex;
+            }
+            
+            nav ul li {
+                margin: 0;
+                padding: 0.8rem 2rem;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+            
+            .step {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero {
+                height: 400px;
+            }
+            
+            .hero-content {
+                text-align: center;
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .feature-box, .contact-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">Web<span>Extract</span></div>
+            <nav>
+                <ul id="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#tools">Tools</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="hamburger" id="hamburger">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="container hero-content">
+                <h1>Transform the Web into Structured Knowledge</h1>
+                <p>Extract, organize, and leverage web data with our powerful knowledge extraction tools. Turn unstructured web content into actionable insights.</p>
+                <a href="#demo" class="btn">Try Demo</a>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Powerful Extraction Features</h2>
+                    <p>Our web knowledge extraction platform offers a comprehensive suite of tools to transform web content into structured data.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-box">
+                        <div class="feature-icon">📊</div>
+                        <h3 class="feature-title">Semantic Analysis</h3>
+                        <p>Extract meaning and context from web pages using advanced natural language processing algorithms.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">🔍</div>
+                        <h3 class="feature-title">Entity Recognition</h3>
+                        <p>Automatically identify people, organizations, locations, and other named entities within web content.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">🌐</div>
+                        <h3 class="feature-title">Structured Data Extraction</h3>
+                        <p>Pull tables, lists, and other structured data from websites and convert them to usable formats.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">📱</div>
+                        <h3 class="feature-title">Mobile-Friendly</h3>
+                        <p>Access and use our extraction tools on any device with responsive design and mobile optimization.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">⚡</div>
+                        <h3 class="feature-title">Real-Time Processing</h3>
+                        <p>Process and extract knowledge from web pages in real-time with minimal latency.</p>
+                    </div>
+                    <div class="feature-box">
+                        <div class="feature-icon">🔄</div>
+                        <h3 class="feature-title">API Integration</h3>
+                        <p>Seamlessly integrate our extraction capabilities into your own applications via REST API.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="demo" id="demo">
+            <div class="container demo-content">
+                <div class="demo-text">
+                    <div class="section-title" style="text-align:left">
+                        <h2>See it in Action</h2>
+                        <p>Watch how our technology transforms unstructured web content into organized, structured knowledge in seconds.</p>
+                    </div>
+                    <p>Our advanced algorithms analyze web pages to identify key information, entities, relationships, and concepts, creating a comprehensive knowledge graph from any website.</p>
+                    <a href="#interactive-demo" class="btn">Try Interactive Demo</a>
+                </div>
+                <div class="demo-image">
+                    <img src="images/web_extraction.png" alt="Web Knowledge Extraction Demo">
+                </div>
+            </div>
+        </section>
+
+        <section class="interactive-demo" id="interactive-demo">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Interactive Demo</h2>
+                    <p>Try our web knowledge extraction tools right in your browser. Enter a URL and see the structured data we can extract.</p>
+                </div>
+                <div class="extraction-demo">
+                    <div class="demo-controls">
+                        <div class="url-input">
+                            <input type="text" class="form-control" id="url-input" placeholder="Enter website URL (e.g., https://example.com)">
+                        </div>
+                        <button class="btn" id="extract-btn">Extract Knowledge</button>
+                    </div>
+                    <div class="loader" id="loader">
+                        <div class="loader-spinner"></div>
+                        <p>Analyzing and extracting knowledge...</p>
+                    </div>
+                    <div class="extraction-results" id="extraction-results">
+                        <div class="result-tabs">
+                            <button class="result-tab active" data-tab="entities">Entities</button>
+                            <button class="result-tab" data-tab="structured">Structured Data</button>
+                            <button class="result-tab" data-tab="summary">Summary</button>
+                            <button class="result-tab" data-tab="json">JSON</button>
+                        </div>
+                        <div class="result-content active" id="entities-content">
+                            <h3>Extracted Entities</h3>
+                            <div id="entities-data">
+                                <p>No data extracted yet. Enter a URL and click "Extract Knowledge".</p>
+                            </div>
+                        </div>
+                        <div class="result-content" id="structured-content">
+                            <h3>Structured Data</h3>
+                            <div id="structured-data">
+                                <p>No data extracted yet. Enter a URL and click "Extract Knowledge".</p>
+                            </div>
+                        </div>
+                        <div class="result-content" id="summary-content">
+                            <h3>Page Summary</h3>
+                            <div id="summary-data">
+                                <p>No data extracted yet. Enter a URL and click "Extract Knowledge".</p>
+                            </div>
+                        </div>
+                        <div class="result-content" id="json-content">
+                            <h3>Raw JSON</h3>
+                            <pre id="json-data">No data extracted yet. Enter a URL and click "Extract Knowledge".</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section-title">
+                    <h2>How It Works</h2>
+                    <p>Our web knowledge extraction process is powered by cutting-edge AI and machine learning technologies.</p>
+                </div>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Web Crawling</h3>
+                            <p>Our system crawls the specified web pages, capturing all content while respecting robots.txt rules and site policies.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Content Parsing</h3>
+                            <p>The raw HTML is processed to extract clean text, images, and structured elements like tables and lists.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Semantic Analysis</h3>
+                            <p>Natural language processing algorithms analyze the content to understand meaning, context, and relationships.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Entity Recognition</h3>
+                            <p>Named entities like people, organizations, locations, dates, and more are identified and categorized.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Knowledge Graph Creation</h3>
+                            <p>Relationships between entities are mapped to create a comprehensive knowledge graph representing the extracted information.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="tools" id="tools">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Our Extraction Tools</h2>
+                    <p>Explore our suite of specialized tools designed for different web knowledge extraction needs.</p>
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-image">
+                            <img src="images/entity_extraction.png" alt="Entity Extractor">
+                        </div>
+                        <div class="tool-content">
+                            <h3 class="tool-title">Entity Extractor</h3>
+                            <p class="tool-description">Identify and categorize named entities from web content including people, organizations, products, and more.</p>
+                            <a href="#" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-image">
+                            <img src="images/table_harvester.png" alt="Table Harvester">
+                        </div>
+                        <div class="tool-content">
+                            <h3 class="tool-title">Table Harvester</h3>
+                            <p class="tool-description">Extract tables from web pages and convert them to structured formats like CSV, JSON, or Excel.</p>
+                            <a href="#" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-image">
+                            <img src="images/graph_builder.png" alt="Knowledge Graph Builder">
+                        </div>
+                        <div class="tool-content">
+                            <h3 class="tool-title">Knowledge Graph Builder</h3>
+                            <p class="tool-description">Create comprehensive knowledge graphs by mapping relationships between extracted entities.</p>
+                            <a href="#" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-image">
+                            <img src="images/semantic_analyzer.jpg" alt="Semantic Analyzer">
+                        </div>
+                        <div class="tool-content">
+                            <h3 class="tool-title">Semantic Analyzer</h3>
+                            <p class="tool-description">Understand the meaning and context of web content using advanced natural language processing.</p>
+                            <a href="#" class="btn">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Get in Touch</h2>
+                    <p>Have questions about our web knowledge extraction tools? We'd love to hear from you.</p>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" id="name" class="form-control" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="Your email address">
+                    </div>
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" id="subject" class="form-control" placeholder="Subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea id="message" class="form-control" placeholder="Your message"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">Web<span>Extract</span></div>
+                    <p>Transforming unstructured web content into valuable knowledge through advanced extraction technologies.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">f</a>
+                        <a href="#" class="social-link">t</a>
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">g</a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">News</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">Support Center</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">GDPR Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 WebExtract. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        document.getElementById('hamburger').addEventListener('click', function() {
+            document.getElementById('nav-menu').classList.toggle('show');
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Tab switching in results section
+        document.querySelectorAll('.result-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.result-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.add('active');
+            });
+        });
+
+        // Extract button click handler
+        document.getElementById('extract-btn').addEventListener('click', function() {
+            const url = document.getElementById('url-input').value.trim();
+            
+            if (url === '') {
+                alert('Please enter a valid URL');
+                return;
+            }
+            
+            // Show loader
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('extraction-results').style.display = 'none';
+            
+            // Simulate API call with setTimeout
+            setTimeout(function() {
+                // Hide loader
+                document.getElementById('loader').style.display = 'none';
+                
+                // Show results
+                document.getElementById('extraction-results').style.display = 'block';
+                
+                // Generate mock data based on URL
+                generateMockExtraction(url);
+            }, 2000);
+        });
+        
+        // Generate mock extraction results for demo purposes
+        function generateMockExtraction(url) {
+            // Mock entities data
+            const mockEntities = {
+                people: ['John Smith', 'Jane Doe', 'Robert Johnson'],
+                organizations: ['Acme Inc.', 'Global Tech', 'Research Labs'],
+                locations: ['New York', 'San Francisco', 'London'],
+                dates: ['January 15, 2025', 'March 10, 2025', 'December 31, 2024']
+            };
+            
+            // Mock structured data
+            const mockStructured = [
+                {
+                    type: 'table',
+                    headers: ['Product', 'Price', 'Rating'],
+                    rows: [
+                        ['Product A', '$29.99', '4.5/5'],
+                        ['Product B', '$49.99', '4.8/5'],
+                        ['Product C', '$19.99', '4.2/5']
+                    ]
+                },
+                {
+                    type: 'list',
+                    items: ['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4']
+                }
+            ];
+            
+            // Mock summary
+            const mockSummary = {
+                title: 'Example Web Page',
+                mainTopic: 'Web Technology',
+                keyPoints: [
+                    'Innovative solutions for modern businesses',
+                    'Cutting-edge technology implementation',
+                    'Research-backed methodologies'
+                ],
+                sentiment: 'Positive',
+                readability: 'Medium'
+            };
+            
+            // Generate HTML for entities
+            let entitiesHTML = '<div class="extracted-entities">';
+            
+            for (const [type, items] of Object.entries(mockEntities)) {
+                entitiesHTML += `<h4>${type.charAt(0).toUpperCase() + type.slice(1)}</h4><ul>`;
+                items.forEach(item => {
+                    entitiesHTML += `<li>${item}</li>`;
+                });
+                entitiesHTML += '</ul>';
+            }
+            
+            entitiesHTML += '</div>';
+            document.getElementById('entities-data').innerHTML = entitiesHTML;
+            
+            // Generate HTML for structured data
+            let structuredHTML = '<div class="structured-data-results">';
+            
+            mockStructured.forEach(item => {
+                if (item.type === 'table') {
+                    structuredHTML += '<div class="extracted-table"><h4>Extracted Table</h4><table border="1" cellpadding="5">';
+                    structuredHTML += '<tr>';
+                    item.headers.forEach(header => {
+                        structuredHTML += `<th>${header}</th>`;
+                    });
+                    structuredHTML += '</tr>';
+                    
+                    item.rows.forEach(row => {
+                        structuredHTML += '<tr>';
+                        row.forEach(cell => {
+                            structuredHTML += `<td>${cell}</td>`;
+                        });
+                        structuredHTML += '</tr>';
+                    });
+                    
+                    structuredHTML += '</table></div>';
+                } else if (item.type === 'list') {
+                    structuredHTML += '<div class="extracted-list"><h4>Extracted List</h4><ul>';
+                    item.items.forEach(listItem => {
+                        structuredHTML += `<li>${listItem}</li>`;
+                    });
+                    structuredHTML += '</ul></div>';
+                }
+            });
+            
+            structuredHTML += '</div>';
+            document.getElementById('structured-data').innerHTML = structuredHTML;
+            
+            // Generate HTML for summary
+            let summaryHTML = '<div class="page-summary">';
+            summaryHTML += `<p><strong>Page Title:</strong> ${mockSummary.title}</p>`;
+            summaryHTML += `<p><strong>Main Topic:</strong> ${mockSummary.mainTopic}</p>`;
+            summaryHTML += '<p><strong>Key Points:</strong></p><ul>';
+            
+            mockSummary.keyPoints.forEach(point => {
+                summaryHTML += `<li>${point}</li>`;
+            });
+            
+            summaryHTML += '</ul>';
+            summaryHTML += `<p><strong>Overall Sentiment:</strong> ${mockSummary.sentiment}</p>`;
+            summaryHTML += `<p><strong>Readability Level:</strong> ${mockSummary.readability}</p>`;
+            summaryHTML += '</div>';
+            
+            document.getElementById('summary-data').innerHTML = summaryHTML;
+            
+            // Generate JSON representation
+            const mockJSON = {
+                url: url,
+                extracted_at: new Date().toISOString(),
+                entities: mockEntities,
+                structured_data: mockStructured,
+                summary: mockSummary
+            };
+            
+            document.getElementById('json-data').textContent = JSON.stringify(mockJSON, null, 2);
+        }
+        
+        // Add animation on scroll
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.feature-box, .tool-card, .step');
+            
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('animated');
+                }
+            });
+        }
+        
+        // Add scroll animation class
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add this to CSS if using this function
+            const style = document.createElement('style');
+            style.textContent = `
+                .feature-box, .tool-card, .step {
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: opacity 0.5s ease, transform 0.5s ease;
+                }
+                .animated {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Initial check on page load
+            animateOnScroll();
+            
+            // Check on scroll
+            window.addEventListener('scroll', animateOnScroll);
+        });
+    </script>
+</body>
+</html>
